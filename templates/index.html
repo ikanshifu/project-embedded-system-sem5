@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Waste Management Dashboard</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map { height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Initialize map, centered on Jakarta
+        var map = L.map('map').setView([-6.2088, 106.8456], 12);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Function to fetch bin data and update the map
+        async function updateMap() {
+            const response = await fetch('/api/get_bins');
+            const bins = await response.json();
+
+            bins.forEach(bin => {
+                let color;
+                if (bin.fullness > 80) {
+                    color = 'red';
+                } else if (bin.fullness > 50) {
+                    color = 'orange';
+                } else {
+                    color = 'green';
+                }
+                
+                // Add a circle marker for each bin
+                L.circleMarker([bin.lat, bin.lon], {
+                    radius: 8,
+                    color: color,
+                    fillOpacity: 0.8
+                }).addTo(map)
+                  .bindPopup(`<b>Bin ID:</b> ${bin.id}<br><b>Fullness:</b> ${bin.fullness}%`);
+            });
+        }
+
+        // Update the map when the page loads
+        updateMap();
+        // And update it every 30 seconds
+        setInterval(updateMap, 30000);
+    </script>
+</body>
+</html>
