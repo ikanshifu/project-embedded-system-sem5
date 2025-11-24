@@ -29,7 +29,7 @@ for i in range(len(route_scenario_1) - 1):
     total_distance_1 += haversine(p1[0], p1[1], p2[0], p2[1])
 
 # 4. Scenario 2: Trash collector only visits the bins that are full, let's say in this case is bin 1 and bin 5
-route_scenario_2 = ["Depot", "Bin_1", "Bin_5", "Depot"]
+route_scenario_2 = ["HQ", "Bin_1", "Bin_5", "HQ"]
 
 total_distance_2 = 0
 for i in range(len(route_scenario_2) - 1):
